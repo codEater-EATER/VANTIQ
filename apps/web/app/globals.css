@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 255 255 255;
+    --foreground: 16 17 20;
+    
+    /* Light theme */
+    --primary: 140 123 184;
+    --primary-foreground: 246 242 234;
+    --secondary: 165 181 154;
+    --secondary-foreground: 16 24 39;
+    --destructive: 220 38 38;
+    --muted: 229 231 235;
+    --muted-foreground: 107 114 128;
+    --accent: 198 173 131;
+  }
+
+  [data-theme="dark"] {
+    --background: 16 17 20;
+    --foreground: 246 242 234;
+    --primary: 140 123 184;
+    --primary-foreground: 16 17 20;
+    --secondary: 115 118 83;
+    --secondary-foreground: 246 242 234;
+    --muted: 30 41 59;
+    --muted-foreground: 148 163 184;
+    --accent: 198 173 131;
+  }
+}
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-foreground;
+}

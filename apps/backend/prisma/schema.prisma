@@ -1,0 +1,820 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============= USERS & AUTHENTICATION =============
+
+model User {
+  id                    String                   @id @default(uuid())
+  clerkId               String                   @unique
+  email                 String                   @unique
+  name                  String?
+  avatar                String?
+  role                  Role                     @default(LEAD_MANAGER)
+  status                UserStatus               @default(ACTIVE)
+  theme                 Theme                    @default(DARK)
+  accentColor           String                   @default("#8C7BB8")
+  createdAt             DateTime                 @default(now())
+  updatedAt             DateTime                 @updatedAt
+  deletedAt             DateTime?
+
+  // Relations
+  projects              Project[]
+  conversations         Conversation[]
+  files                 File[]
+  activityLogs          Activity[]
+  notificationSettings  NotificationSetting?
+  creditBalance         Decimal                  @default(100)
+  rewardTransactions    RewardTransaction[]
+  leads                 Lead[]
+
+  @@index([clerkId])
+  @@index([email])
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  LEAD_MANAGER
+  SALES_AGENT
+  BUYER
+  ANALYST
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  AUTO
+}
+
+// ============= PROJECTS & CONVERSATIONS =============
+
+model Project {
+  id            String              @id @default(uuid())
+  userId        String
+  name          String
+  description   String?
+  instructions  String?
+  icon          String              @default("📁")
+  colour        String              @default("#8C7BB8")
+  status        ProjectStatus       @default(ACTIVE)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  // Relations
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+  files         File[]
+
+  @@index([userId])
+}
+
+enum ProjectStatus {
+  ACTIVE
+  ARCHIVED
+  DELETED
+}
+
+model Conversation {
+  id              String              @id @default(uuid())
+  userId          String
+  projectId       String?
+  title           String?
+  model           String              @default("qwen")
+  status          ConversationStatus  @default(ACTIVE)
+  pinnedAt        DateTime?
+  archivedAt      DateTime?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  // Relations
+  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project         Project?            @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  messages        Message[]
+  searchUsage     SearchUsage[]
+
+  @@index([userId])
+  @@index([projectId])
+}
+
+enum ConversationStatus {
+  ACTIVE
+  ARCHIVED
+  DELETED
+}
+
+model Message {
+  id                String              @id @default(uuid())
+  conversationId    String
+  role              MessageRole         @default(USER)
+  content           String
+  model             String?
+  tokensUsed        Int                 @default(0)
+  attachments       String[]            @default([])
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  // Relations
+  conversation      Conversation        @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+// ============= FILES & LIBRARY =============
+
+model File {
+  id              String              @id @default(uuid())
+  userId          String
+  projectId       String?
+  fileName        String
+  fileSize        BigInt
+  mimeType        String
+  storageUrl      String
+  status          FileStatus          @default(UPLOADED)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  // Relations
+  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project         Project?            @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([projectId])
+}
+
+enum FileStatus {
+  UPLOADED
+  PROCESSING
+  READY
+  FAILED
+  DELETED
+}
+
+// ============= LEADS =============
+
+model Lead {
+  id                    String                   @id @default(uuid())
+  userId                String
+  externalId            String?
+  firstName             String
+  lastName              String
+  phoneNumber           String
+  email                 String?
+  city                  String
+  state                 String
+  loanType              String
+  loanAmount            Int?
+  source                String
+  campaignId            String?
+  qualificationScore    Int                      @default(0)
+  status                LeadStatus               @default(NEW)
+  isDuplicate           Boolean                  @default(false)
+  duplicateSourceId     String?
+  consentId             String?
+  createdAt             DateTime                 @default(now())
+  updatedAt             DateTime                 @updatedAt
+  acquiredAt            DateTime                 @default(now())
+
+  // Relations
+  user                  User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaign              Campaign?                @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  identifiers           LeadIdentifier[]
+  consent               Consent?
+  activities            Activity[]
+  distributions         Distribution[]
+  applications          Application[]
+  statusHistory         LeadStatusHistory[]
+
+  @@index([userId])
+  @@index([phoneNumber])
+  @@index([email])
+  @@index([campaignId])
+  @@index([status])
+  @@unique([phoneNumber, email])
+}
+
+enum LeadStatus {
+  NEW
+  VERIFICATION_PENDING
+  VERIFIED
+  QUALIFIED
+  AWAITING_BUYER
+  DISTRIBUTED
+  ACCEPTED
+  CONTACTED
+  INTERESTED
+  APPLICATION_STARTED
+  APPLICATION_SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  DISBURSED
+  COMMISSION_PENDING
+  COMMISSION_RECEIVED
+  REJECTED
+  NOT_INTERESTED
+  DUPLICATE
+  INVALID
+  DISPUTED
+}
+
+model LeadIdentifier {
+  id          String      @id @default(uuid())
+  leadId      String
+  type        IdentifierType
+  value       String      @db.Text
+  hash        String?
+  verified    Boolean     @default(false())
+  createdAt   DateTime    @default(now())
+
+  // Relations
+  lead        Lead        @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@unique([type, hash])
+  @@index([leadId])
+}
+
+enum IdentifierType {
+  PHONE
+  EMAIL
+  PHONE_EMAIL_COMBO
+}
+
+model Consent {
+  id                  String          @id @default(uuid())
+  leadId              String          @unique
+  version             String          @default("1.0")
+  consentText         String          @db.Text
+  grantedAt           DateTime        @default(now())
+  withdrawnAt         DateTime?
+  ipAddress           String?
+  userAgent           String?
+  withdrawalTimestamp DateTime?
+  withdrawalReason    String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  // Relations
+  lead                Lead            @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+}
+
+model LeadStatusHistory {
+  id              String          @id @default(uuid())
+  leadId          String
+  previousStatus  LeadStatus?
+  newStatus       LeadStatus
+  reason          String?
+  changedAt       DateTime        @default(now())
+
+  // Relations
+  lead            Lead            @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+}
+
+// ============= CAMPAIGNS =============
+
+model Campaign {
+  id                    String              @id @default(uuid())
+  name                  String
+  loanType              String
+  targetCity            String
+  targetState           String
+  audience              String?
+  acquisitionSource     String
+  dailyLeadTarget       Int
+  budget                Decimal             @default(0)
+  status                CampaignStatus      @default(ACTIVE)
+  startDate             DateTime
+  endDate               DateTime?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  // Relations
+  leads                 Lead[]
+  events                CampaignEvent[]
+  buyerAssignments      BuyerAssignment[]
+
+  @@index([status])
+  @@index([targetCity])
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+model CampaignEvent {
+  id            String      @id @default(uuid())
+  campaignId    String
+  eventType     String
+  leadsGenerated Int        @default(0)
+  recordedAt    DateTime    @default(now())
+
+  // Relations
+  campaign      Campaign    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+}
+
+// ============= BUYERS & DISTRIBUTION =============
+
+model Buyer {
+  id                      String                  @id @default(uuid())
+  company                 String
+  contactPerson           String
+  email                   String                  @unique
+  phone                   String
+  address                 String
+  website                 String?
+  status                  BuyerStatus             @default(ACTIVE)
+  verifiedAt              DateTime?
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime                @updatedAt
+
+  // Relations
+  products                BuyerProduct[]
+  serviceable             String[]                @default([])
+  agreements              Agreement[]
+  assignments             BuyerAssignment[]
+  distributions           Distribution[]
+  applications            Application[]
+  disbursements           Disbursement[]
+  commissionLedger        CommissionLedger[]
+
+  @@index([status])
+  @@index([email])
+}
+
+enum BuyerStatus {
+  PENDING
+  VERIFIED
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+model BuyerProduct {
+  id          String    @id @default(uuid())
+  buyerId     String
+  productName String
+  loanType    String
+  minAmount   Int?
+  maxAmount   Int?
+  createdAt   DateTime  @default(now())
+
+  // Relations
+  buyer       Buyer     @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+
+  @@index([buyerId])
+}
+
+model Agreement {
+  id                    String                @id @default(uuid())
+  buyerId               String
+  agreementText         String                @db.Text
+  version               String                @default("1.0")
+  commissionType        CommissionType        @default(FIXED)
+  commissionValue       Decimal               @default(0)
+  commissionPercentage  Decimal?
+  paymentDeadline       Int                   @default(30)
+  attributionPeriod     Int                   @default(30)
+  duplicateLeadPolicy   String?
+  rejectionDeadline     Int                   @default(7)
+  status                AgreementStatus       @default(ACTIVE)
+  signedAt              DateTime?
+  validFrom             DateTime              @default(now())
+  validUntil            DateTime?
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+
+  // Relations
+  buyer                 Buyer                 @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  distributions         Distribution[]
+
+  @@index([buyerId])
+}
+
+enum CommissionType {
+  FIXED
+  PERCENTAGE
+  TIERED
+}
+
+enum AgreementStatus {
+  DRAFT
+  PENDING
+  SIGNED
+  ACTIVE
+  EXPIRED
+  TERMINATED
+}
+
+model BuyerAssignment {
+  id          String    @id @default(uuid())
+  buyerId     String
+  campaignId  String
+  priority    Int       @default(0)
+  capacity    Int       @default(0)
+  assignedAt  DateTime  @default(now())
+
+  // Relations
+  buyer       Buyer     @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  campaign    Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([buyerId, campaignId])
+}
+
+model Distribution {
+  id                    String                @id @default(uuid())
+  leadId                String
+  buyerId               String
+  agreementId           String
+  distributionMethod    String                @default("API")
+  acceptanceStatus      AcceptanceStatus      @default(PENDING)
+  acceptedAt            DateTime?
+  rejectionReason       String?
+  rejectedAt            DateTime?
+  distributedAt         DateTime              @default(now())
+  createdAt             DateTime              @default(now())
+
+  // Relations
+  lead                  Lead                  @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  buyer                 Buyer                 @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  agreement             Agreement             @relation(fields: [agreementId], references: [id], onDelete: Restrict)
+
+  @@index([leadId])
+  @@index([buyerId])
+  @@unique([leadId, buyerId])
+}
+
+enum AcceptanceStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+// ============= APPLICATIONS & DISBURSEMENTS =============
+
+model Application {
+  id              String              @id @default(uuid())
+  leadId          String
+  buyerId         String
+  status          ApplicationStatus   @default(SUBMITTED)
+  applicationId   String?
+  submittedAt     DateTime            @default(now())
+  approvedAt      DateTime?
+  rejectedAt      DateTime?
+  rejectionReason String?
+  updatedAt       DateTime            @updatedAt
+
+  // Relations
+  lead            Lead                @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  buyer           Buyer               @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  disbursement    Disbursement?
+
+  @@unique([leadId, buyerId])
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model Disbursement {
+  id                String              @id @default(uuid())
+  leadId            String
+  buyerId           String
+  applicationId     String              @unique
+  disburseAmount    Decimal             @db.Decimal(15, 2)
+  disbursedAt       DateTime
+  referenceNumber   String?
+  status            DisbursementStatus  @default(REPORTED)
+  verifiedAt        DateTime?
+  verifiedBy        String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  // Relations
+  lead              Lead                @relation("DisbursementLead")
+  buyer             Buyer               @relation(fields: [buyerId], references: [id], onDelete: Restrict)
+  application       Application         @relation(fields: [applicationId], references: [id], onDelete: Restrict)
+  commissionLedger  CommissionLedger?
+
+  @@index([buyerId])
+  @@index([applicationId])
+}
+
+enum DisbursementStatus {
+  REPORTED
+  VERIFIED
+  REJECTED
+  UNDER_INVESTIGATION
+}
+
+// ============= COMMISSION SYSTEM - CRITICAL =============
+
+model CommissionLedger {
+  id                String              @id @default(uuid())
+  leadId            String
+  buyerId           String
+  disburseAmount    Decimal             @db.Decimal(15, 2)
+  commissionAmount  Decimal             @db.Decimal(15, 2)
+  status            CommissionStatus    @default(PENDING)
+  approvedAt        DateTime?
+  receivedAt        DateTime?
+  paidAt            DateTime?
+  paymentReference  String?
+  notes             String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  // Relations
+  lead              Lead                @relation("CommissionLead", fields: [leadId], references: [id], onDelete: Cascade)
+  buyer             Buyer               @relation(fields: [buyerId], references: [id], onDelete: Restrict)
+  disbursement      Disbursement?       @relation(fields: [disburseAmount], references: [disburseAmount])
+
+  @@index([buyerId])
+  @@index([status])
+}
+
+enum CommissionStatus {
+  PENDING
+  APPROVED
+  RECEIVED
+  OUTSTANDING
+  DISPUTED
+  PAID
+}
+
+model CommissionDispute {
+  id                String              @id @default(uuid())
+  commissionId      String
+  buyerId           String
+  reason            String
+  evidence          String?
+  status            DisputeStatus       @default(OPEN)
+  resolvedAt        DateTime?
+  resolution        String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  @@index([status])
+}
+
+enum DisputeStatus {
+  OPEN
+  UNDER_REVIEW
+  RESOLVED
+  ESCALATED
+  CLOSED
+}
+
+// ============= INTEGRATIONS =============
+
+model IntegrationAccount {
+  id              String                @id @default(uuid())
+  userId          String
+  provider        IntegrationProvider
+  accountName     String
+  config          String                @db.Text
+  status          IntegrationStatus     @default(CONNECTED)
+  connectedAt     DateTime              @default(now())
+  lastTestedAt    DateTime?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  // Relations
+  jobs            IntegrationJob[]
+
+  @@unique([userId, provider])
+}
+
+enum IntegrationProvider {
+  APOLLO
+  APIFY
+  DUCKDUCKGO
+  GOOGLE_SHEETS
+  AZURE_AI
+  GROK
+  NVIDIA_NEMOTRON
+  GOOGLE_ADMOB
+}
+
+enum IntegrationStatus {
+  CONNECTED
+  DISCONNECTED
+  FAILED
+  RATE_LIMITED
+}
+
+model IntegrationJob {
+  id                String              @id @default(uuid())
+  accountId         String
+  jobType           String
+  config            String              @db.Text
+  status            JobStatus           @default(PENDING)
+  progress          Int                 @default(0)
+  result            String?             @db.Text
+  error             String?
+  startedAt         DateTime?
+  completedAt       DateTime?
+  createdAt         DateTime            @default(now())
+
+  // Relations
+  account           IntegrationAccount  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@index([status])
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// ============= SEARCH & WEB =============
+
+model SearchUsage {
+  id              String            @id @default(uuid())
+  conversationId  String
+  query           String
+  results         Int
+  usedAt          DateTime          @default(now())
+
+  // Relations
+  conversation    Conversation      @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+}
+
+// ============= SCHEDULED TASKS =============
+
+model ScheduledTask {
+  id              String              @id @default(uuid())
+  userId          String?
+  name            String
+  description     String?
+  taskType        String
+  schedule        String
+  timezone        String              @default("UTC")
+  config          String              @db.Text
+  status          ScheduleStatus      @default(ACTIVE)
+  lastRunAt       DateTime?
+  nextRunAt       DateTime
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@index([status])
+}
+
+enum ScheduleStatus {
+  ACTIVE
+  PAUSED
+  DISABLED
+}
+
+// ============= PLUGINS =============
+
+model PluginRegistry {
+  id              String              @id @default(uuid())
+  name            String              @unique
+  category        String
+  description     String?
+  version         String
+  config          String              @db.Text
+  enabled         Boolean             @default(true)
+  createdAt       DateTime            @default(now())
+
+  @@index([category])
+}
+
+// ============= NOTIFICATIONS =============
+
+model Notification {
+  id              String              @id @default(uuid())
+  userId          String
+  title           String
+  message         String
+  type            NotificationType    @default(INFO)
+  read            Boolean             @default(false)
+  readAt          DateTime?
+  actionUrl       String?
+  createdAt       DateTime            @default(now())
+
+  @@index([userId])
+  @@index([read])
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  REMINDER
+}
+
+model NotificationSetting {
+  id              String              @id @default(uuid())
+  userId          String              @unique
+  emailNotifications    Boolean       @default(true)
+  pushNotifications     Boolean       @default(true)
+  dailyReport           Boolean       @default(true)
+  weeklyReport          Boolean       @default(true)
+  commissionAlerts      Boolean       @default(true)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  // Relations
+  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============= REWARDS & USAGE =============
+
+model RewardTransaction {
+  id              String              @id @default(uuid())
+  userId          String
+  type            RewardType          @default(AD_WATCHED)
+  amount          Decimal             @default(10)
+  reason          String?
+  createdAt       DateTime            @default(now())
+
+  // Relations
+  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+enum RewardType {
+  AD_WATCHED
+  REFERRAL
+  ACHIEVEMENT
+  BONUS
+  PURCHASE
+}
+
+// ============= AUDIT & ACTIVITY =============
+
+model Activity {
+  id              String              @id @default(uuid())
+  userId          String
+  leadId          String?
+  action          String
+  details         String?             @db.Text
+  timestamp       DateTime            @default(now())
+
+  // Relations
+  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lead            Lead?               @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([leadId])
+}
+
+model AuditLog {
+  id              String              @id @default(uuid())
+  entityType      String
+  entityId        String
+  action          String
+  oldValues       String?             @db.Text
+  newValues       String?             @db.Text
+  userId          String?
+  ipAddress       String?
+  timestamp       DateTime            @default(now())
+
+  @@index([entityType])
+  @@index([entityId])
+  @@index([timestamp])
+}
