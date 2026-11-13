@@ -27,15 +27,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <head>
-          <meta charSet="utf-8" />
-        </head>
-        <body className="bg-vantiq-navy text-vantiq-ivory antialiased">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta charSet="utf-8" />
+      </head>
+      <body className="bg-vantiq-navy text-vantiq-ivory antialiased">
+        <ClerkProvider>
           {children}
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
