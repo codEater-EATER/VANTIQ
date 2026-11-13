@@ -4,10 +4,8 @@
   "description": "VANTIQ - Intelligence That Converts. AI · Leads · Business Intelligence",
   "private": true,
   "workspaces": [
-    "apps/mobile",
     "apps/web",
-    "apps/backend",
-    "packages/shared"
+    "apps/backend"
   ],
   "scripts": {
     "dev": "concurrently \"cd apps/mobile && npm run start\" \"cd apps/web && npm run dev\" \"cd apps/backend && npm run dev\"",

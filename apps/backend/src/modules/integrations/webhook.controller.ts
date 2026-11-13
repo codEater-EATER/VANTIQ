@@ -11,12 +11,12 @@ export class WebhookController {
   constructor(private webhookService: WebhookService) {}
 
   @Post('register')
-  async registerWebhook(@Request() req, @Body() body: any) {
+  async registerWebhook(@Request() req: any, @Body() body: any) {
     return this.webhookService.registerWebhook(req.user.sub, body);
   }
 
   @Get()
-  async listWebhooks(@Request() req) {
+  async listWebhooks(@Request() req: any) {
     return this.webhookService.listWebhooks(req.user.sub);
   }
 
@@ -42,7 +42,7 @@ export class WebhookController {
   }
 
   @Get('stats')
-  async getStats(@Request() req) {
+  async getStats(@Request() req: any) {
     return this.webhookService.getWebhookStats(req.user.sub);
   }
 }

@@ -1,14 +1,11 @@
-'use client';
-
-import { MainLayout } from '@/components/layout/main-layout';
-
-export default function CommissionsPage() {
+export default function Commissions() {
   return (
-    <MainLayout>
-      <div className="p-6 md:p-8">
-        <h1 className="text-4xl font-bold text-vantiq-ivory mb-2">Commission Tracking</h1>
-        <p className="text-vantiq-ivory/60 mb-8">Commission tracking coming soon...</p>
+    <div style={{ padding: '40px', color: '#F6F2EA' }}>
+      <h1>💰 Commission Tracking</h1>
+      <p style={{ marginTop: '20px', fontSize: '16px' }}>Immutable commission ledger and payment tracking</p>
+      <div style={{ marginTop: '30px', backgroundColor: '#202124', padding: '20px', borderRadius: '8px' }}>
+        <p>Total Commissions: $0</p>
       </div>
-    </MainLayout>
+    </div>
   );
 }

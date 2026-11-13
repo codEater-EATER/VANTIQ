@@ -41,7 +41,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   @ApiSecurity('bearer')
-  async getMe(@Request() req) {
+  async getMe(@Request() req: any) {
     return {
       id: req.user.sub,
       email: req.user.email,

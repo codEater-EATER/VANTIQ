@@ -1,6 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
-import { Distribution, AcceptanceStatus } from '@prisma/client';
 
 export interface DistributionRequest {
   leadId: string;
@@ -22,7 +21,7 @@ export class DistributionsService {
   /**
    * Distribute a lead to one or more buyers
    */
-  async distributeLead(request: DistributionRequest): Promise<Distribution[]> {
+  async distributeLead(request: DistributionRequest): Promise<any[]> {
     const lead = await this.prisma.lead.findUnique({
       where: { id: request.leadId },
     });
@@ -44,7 +43,7 @@ export class DistributionsService {
     }
 
     // Create distributions
-    const distributions: Distribution[] = [];
+    const distributions: any[] = [];
 
     for (const agreement of agreements) {
       try {
@@ -157,8 +156,8 @@ export class DistributionsService {
     });
 
     // Filter buyers that match lead's loan type and amount
-    let filteredBuyers = buyers.filter((buyer) => {
-      const matchingProduct = buyer.products.find((p) => p.loanType === lead.loanType);
+    let filteredBuyers = buyers.filter((buyer: any) => {
+      const matchingProduct = buyer.products.find((p: any) => p.loanType === lead.loanType);
 
       if (!matchingProduct) return false;
 
@@ -176,7 +175,7 @@ export class DistributionsService {
 
     // Sort by score if enabled
     if (prioritizeByScore) {
-      filteredBuyers.sort((a, b) => {
+      filteredBuyers.sort((a: any, b: any) => {
         const scoreA = a.agreements?.[0]?.commissionValue || 0;
         const scoreB = b.agreements?.[0]?.commissionValue || 0;
         return Number(scoreB) - Number(scoreA);
@@ -192,7 +191,7 @@ export class DistributionsService {
   async acceptDistribution(
     distributionId: string,
     buyerId: string,
-  ): Promise<Distribution> {
+  ): Promise<any> {
     const distribution = await this.prisma.distribution.findUnique({
       where: { id: distributionId },
     });
@@ -229,7 +228,7 @@ export class DistributionsService {
     distributionId: string,
     buyerId: string,
     reason?: string,
-  ): Promise<Distribution> {
+  ): Promise<any> {
     const distribution = await this.prisma.distribution.findUnique({
       where: { id: distributionId },
     });
@@ -270,9 +269,9 @@ export class DistributionsService {
       },
     });
 
-    const accepted = distributions.filter((d) => d.acceptanceStatus === 'ACCEPTED').length;
-    const rejected = distributions.filter((d) => d.acceptanceStatus === 'REJECTED').length;
-    const pending = distributions.filter((d) => d.acceptanceStatus === 'PENDING').length;
+    const accepted = distributions.filter((d: any) => d.acceptanceStatus === 'ACCEPTED').length;
+    const rejected = distributions.filter((d: any) => d.acceptanceStatus === 'REJECTED').length;
+    const pending = distributions.filter((d: any) => d.acceptanceStatus === 'PENDING').length;
 
     const acceptanceRate =
       distributions.length > 0 ? Math.round((accepted / distributions.length) * 100) : 0;
@@ -289,7 +288,7 @@ export class DistributionsService {
   /**
    * Get pending distributions for buyer
    */
-  async getPendingDistributions(buyerId: string): Promise<Distribution[]> {
+  async getPendingDistributions(buyerId: string): Promise<any[]> {
     return this.prisma.distribution.findMany({
       where: {
         buyerId,
@@ -309,7 +308,7 @@ export class DistributionsService {
   async getDistributionHistory(
     userId: string,
     limit: number = 50,
-  ): Promise<Distribution[]> {
+  ): Promise<any[]> {
     return this.prisma.distribution.findMany({
       where: {
         lead: { userId },
@@ -377,13 +376,13 @@ export class DistributionsService {
       include: { lead: true },
     });
 
-    const accepted = distributions.filter((d) => d.acceptanceStatus === 'ACCEPTED').length;
-    const rejected = distributions.filter((d) => d.acceptanceStatus === 'REJECTED').length;
-    const pending = distributions.filter((d) => d.acceptanceStatus === 'PENDING').length;
+    const accepted = distributions.filter((d: any) => d.acceptanceStatus === 'ACCEPTED').length;
+    const rejected = distributions.filter((d: any) => d.acceptanceStatus === 'REJECTED').length;
+    const pending = distributions.filter((d: any) => d.acceptanceStatus === 'PENDING').length;
 
     // Top sources
     const sources = new Map<string, number>();
-    distributions.forEach((d) => {
+    distributions.forEach((d: any) => {
       const source = d.lead.source;
       sources.set(source, (sources.get(source) || 0) + 1);
     });
@@ -395,7 +394,7 @@ export class DistributionsService {
 
     // Top loan types
     const types = new Map<string, number>();
-    distributions.forEach((d) => {
+    distributions.forEach((d: any) => {
       const type = d.lead.loanType;
       types.set(type, (types.get(type) || 0) + 1);
     });
@@ -438,7 +437,7 @@ export class DistributionsService {
   /**
    * Retry failed distribution
    */
-  async retryDistribution(distributionId: string): Promise<Distribution> {
+  async retryDistribution(distributionId: string): Promise<any> {
     const distribution = await this.prisma.distribution.findUnique({
       where: { id: distributionId },
     });

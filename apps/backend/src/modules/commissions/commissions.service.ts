@@ -1,6 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
-import { CommissionLedger, CommissionStatus } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 
 export interface CommissionCalculation {
@@ -68,7 +67,7 @@ export class CommissionsService {
     buyerId: string,
     disbursementAmount: Decimal | number,
     agreement: any,
-  ): Promise<CommissionLedger> {
+  ): Promise<any> {
     const calculation = this.calculateCommission(
       disbursementAmount,
       agreement.commissionType,
@@ -90,7 +89,7 @@ export class CommissionsService {
   /**
    * Approve commission (move to APPROVED status)
    */
-  async approveCommission(commissionId: string): Promise<CommissionLedger> {
+  async approveCommission(commissionId: string): Promise<any> {
     return this.prisma.commissionLedger.update({
       where: { id: commissionId },
       data: {
@@ -103,7 +102,7 @@ export class CommissionsService {
   /**
    * Mark commission as received
    */
-  async markAsReceived(commissionId: string): Promise<CommissionLedger> {
+  async markAsReceived(commissionId: string): Promise<any> {
     return this.prisma.commissionLedger.update({
       where: { id: commissionId },
       data: {
@@ -119,7 +118,7 @@ export class CommissionsService {
   async markAsPaid(
     commissionId: string,
     paymentReference?: string,
-  ): Promise<CommissionLedger> {
+  ): Promise<any> {
     return this.prisma.commissionLedger.update({
       where: { id: commissionId },
       data: {
@@ -133,7 +132,7 @@ export class CommissionsService {
   /**
    * Get commission ledger
    */
-  async getCommissionLedger(buyerId: string): Promise<CommissionLedger[]> {
+  async getCommissionLedger(buyerId: string): Promise<any[]> {
     return this.prisma.commissionLedger.findMany({
       where: { buyerId },
       orderBy: { createdAt: 'desc' },
@@ -197,7 +196,7 @@ export class CommissionsService {
   /**
    * Get payment history
    */
-  async getPaymentHistory(buyerId: string): Promise<CommissionLedger[]> {
+  async getPaymentHistory(buyerId: string): Promise<any[]> {
     return this.prisma.commissionLedger.findMany({
       where: {
         buyerId,
@@ -211,10 +210,10 @@ export class CommissionsService {
    * Generate payment schedule
    */
   async generatePaymentSchedule(buyerId: string): Promise<{
-    dueNow: CommissionLedger[];
-    due7Days: CommissionLedger[];
-    due30Days: CommissionLedger[];
-    overdue: CommissionLedger[];
+    dueNow: any[];
+    due7Days: any[];
+    due30Days: any[];
+    overdue: any[];
   }> {
     const now = new Date();
     const in7Days = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -232,10 +231,10 @@ export class CommissionsService {
       },
     });
 
-    const dueNow: CommissionLedger[] = [];
-    const due7Days: CommissionLedger[] = [];
-    const due30Days: CommissionLedger[] = [];
-    const overdue: CommissionLedger[] = [];
+    const dueNow: any[] = [];
+    const due7Days: any[] = [];
+    const due30Days: any[] = [];
+    const overdue: any[] = [];
 
     for (const ledger of ledgers) {
       const dueDate = new Date(ledger.approvedAt || ledger.createdAt);
@@ -258,7 +257,7 @@ export class CommissionsService {
   /**
    * Dispute commission
    */
-  async disputeCommission(commissionId: string, reason: string): Promise<CommissionLedger> {
+  async disputeCommission(commissionId: string, reason: string): Promise<any> {
     return this.prisma.commissionLedger.update({
       where: { id: commissionId },
       data: {
@@ -271,7 +270,7 @@ export class CommissionsService {
   /**
    * Get disputed commissions
    */
-  async getDisputedCommissions(buyerId: string): Promise<CommissionLedger[]> {
+  async getDisputedCommissions(buyerId: string): Promise<any[]> {
     return this.prisma.commissionLedger.findMany({
       where: {
         buyerId,
@@ -288,7 +287,7 @@ export class CommissionsService {
     commissionId: string,
     approved: boolean,
     notes?: string,
-  ): Promise<CommissionLedger> {
+  ): Promise<any> {
     return this.prisma.commissionLedger.update({
       where: { id: commissionId },
       data: {
@@ -336,7 +335,7 @@ export class CommissionsService {
   /**
    * Get commission by disbursement
    */
-  async getCommissionByDisbursement(disbursementId: string): Promise<CommissionLedger | null> {
+  async getCommissionByDisbursement(disbursementId: string): Promise<any | null> {
     return this.prisma.commissionLedger.findFirst({
       where: {
         disbursement: {

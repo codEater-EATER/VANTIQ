@@ -1,17 +1,28 @@
-import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
-import { AIService } from './ai.service';
-import { JwtAuthGuard } from '../auth/guards/jwt.guard';
-import { ApiTags, ApiSecurity } from '@nestjs/swagger';
+import { Controller, Post, Body } from '@nestjs/common';
+import { QwenService } from './qwen.service';
 
-@ApiTags('AI')
 @Controller('api/v1/ai')
-@UseGuards(JwtAuthGuard)
-@ApiSecurity('bearer')
 export class AIController {
-  constructor(private aiService: AIService) {}
+  constructor(private qwenService: QwenService) {}
 
-  @Post('chat')
-  async chat(@Request() req, @Body() body: any) {
-    return this.aiService.chat(body.conversationId, body.message, body.model);
+  @Post('score-lead')
+  async scoreLead(@Body() body: { leadData: string }) {
+    return await this.qwenService.scoreLead(body.leadData);
+  }
+
+  @Post('explain-qualification')
+  async explainQualification(@Body() body: { leadData: string }) {
+    const explanation = await this.qwenService.explainQualification(
+      body.leadData,
+    );
+    return { explanation };
+  }
+
+  @Post('optimize-campaign')
+  async optimizeCampaign(@Body() body: { campaignData: string }) {
+    const recommendations = await this.qwenService.optimizeCampaign(
+      body.campaignData,
+    );
+    return { recommendations };
   }
 }

@@ -11,12 +11,12 @@ export class IntegrationsController {
   constructor(private integrationsService: IntegrationsService) {}
 
   @Get()
-  async getIntegrations(@Request() req) {
+  async getIntegrations(@Request() req: any) {
     return this.integrationsService.getIntegrations(req.user.sub);
   }
 
   @Post()
-  async createIntegration(@Request() req, @Body() body: any) {
+  async createIntegration(@Request() req: any, @Body() body: any) {
     return this.integrationsService.createIntegration(req.user.sub, body);
   }
 }

@@ -1,31 +1,69 @@
-'use client';
-
-import { SignIn } from '@clerk/nextjs';
-
-export default function SignInPage() {
+export default function SignIn() {
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-vantiq-ivory mb-2">Welcome Back</h1>
-        <p className="text-vantiq-ivory/60">Sign in to your VANTIQ account</p>
-      </div>
+    <div style={{ 
+      minHeight: '100vh', 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center',
+      backgroundColor: '#101827',
+      color: '#F6F2EA',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      <div style={{ maxWidth: '400px', width: '100%', padding: '40px' }}>
+        <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>Sign In to VANTIQ</h1>
+        
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '8px' }}>Email</label>
+          <input 
+            type="email" 
+            placeholder="your@email.com"
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: '6px',
+              border: '1px solid #8C7BB8',
+              backgroundColor: '#202124',
+              color: '#F6F2EA',
+              boxSizing: 'border-box'
+            }}
+          />
+        </div>
 
-      <SignIn
-        appearance={{
-          elements: {
-            card: 'bg-vantiq-charcoal border border-vantiq-violet/20',
-            headerTitle: 'text-vantiq-ivory',
-            headerSubtitle: 'text-vantiq-ivory/60',
-            socialButtonsBlockButton: 'bg-vantiq-violet/10 text-vantiq-ivory hover:bg-vantiq-violet/20 border border-vantiq-violet/20',
-            dividerLine: 'bg-vantiq-violet/20',
-            dividerText: 'text-vantiq-ivory/60',
-            formFieldLabel: 'text-vantiq-ivory',
-            formFieldInput: 'bg-vantiq-navy border-vantiq-violet/20 text-vantiq-ivory focus:border-vantiq-violet',
-            formButtonPrimary: 'bg-vantiq-violet hover:bg-vantiq-violet/90',
-            footerActionLink: 'text-vantiq-violet hover:text-vantiq-gold',
-          },
-        }}
-      />
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '8px' }}>Password</label>
+          <input 
+            type="password" 
+            placeholder="••••••••"
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: '6px',
+              border: '1px solid #8C7BB8',
+              backgroundColor: '#202124',
+              color: '#F6F2EA',
+              boxSizing: 'border-box'
+            }}
+          />
+        </div>
+
+        <button style={{
+          width: '100%',
+          padding: '12px',
+          backgroundColor: '#8C7BB8',
+          color: '#101827',
+          border: 'none',
+          borderRadius: '6px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          marginBottom: '20px'
+        }}>
+          Sign In
+        </button>
+
+        <p style={{ textAlign: 'center' }}>
+          Don&apos;t have an account? <a href="/auth/signup" style={{ color: '#8C7BB8' }}>Sign Up</a>
+        </p>
+      </div>
     </div>
   );
 }

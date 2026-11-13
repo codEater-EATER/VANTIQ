@@ -153,7 +153,7 @@ export class WebhookService {
       },
     });
 
-    return webhooks.map((w) => {
+    return webhooks.map((w: any) => {
       const config = JSON.parse(w.config);
       return {
         id: w.id,
@@ -251,7 +251,7 @@ export class WebhookService {
       take: limit,
     });
 
-    return jobs.map((j) => {
+    return jobs.map((j: any) => {
       const result = JSON.parse(j.result || '{}');
       return {
         id: j.id,

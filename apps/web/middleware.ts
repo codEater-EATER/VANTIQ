@@ -1,16 +1,6 @@
-import { authMiddleware } from '@clerk/nextjs';
-
-export default authMiddleware({
-  publicRoutes: [
-    '/',
-    '/auth/signin',
-    '/auth/signup',
-    '/features',
-  ],
-});
+// Middleware temporarily disabled - Clerk auth middleware causing blank page
+// TODO: Fix middleware configuration for Clerk v4.28.0
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: [],
 };

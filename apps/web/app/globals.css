@@ -32,11 +32,11 @@
 }
 
 * {
-  @apply border-border;
+  @apply border-gray-200 dark:border-gray-800;
 }
 
 body {
-  @apply bg-background text-foreground;
+  @apply bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50;
   font-feature-settings: "rlig" 1, "calt" 1;
 }
 
@@ -53,13 +53,13 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-muted;
+  @apply bg-gray-100 dark:bg-gray-900;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground rounded;
+  @apply bg-gray-400 dark:bg-gray-600 rounded;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-foreground;
+  @apply bg-gray-600 dark:bg-gray-400;
 }

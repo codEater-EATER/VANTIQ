@@ -1,20 +1,11 @@
-'use client';
-
-import { MainLayout } from '@/components/layout/main-layout';
-import { LeadDatabase } from '@/components/leads/lead-database';
-
-export default function LeadsPage() {
+export default function Leads() {
   return (
-    <MainLayout>
-      <div className="p-6 md:p-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-vantiq-ivory mb-2">Lead Database</h1>
-          <p className="text-vantiq-ivory/60">
-            Manage and import leads. Track qualification scores and distribution status.
-          </p>
-        </div>
-        <LeadDatabase />
-      </div>
-    </MainLayout>
+    <div style={{ padding: '40px', color: '#F6F2EA' }}>
+      <h1>📌 Leads Management</h1>
+      <p style={{ marginTop: '20px', fontSize: '16px' }}>Lead database with import, qualification, and distribution tracking.</p>
+      <button style={{ marginTop: '20px', padding: '10px 20px', backgroundColor: '#8C7BB8', color: '#101827', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
+        + Import Leads
+      </button>
+    </div>
   );
 }

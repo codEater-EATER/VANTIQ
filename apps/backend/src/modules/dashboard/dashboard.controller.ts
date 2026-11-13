@@ -15,32 +15,32 @@ export class DashboardController {
   ) {}
 
   @Get('metrics')
-  async getMetrics(@Request() req) {
+  async getMetrics(@Request() req: any) {
     return this.analyticsService.getDashboardMetrics(req.user.sub);
   }
 
   @Get('funnel')
-  async getConversionFunnel(@Request() req) {
+  async getConversionFunnel(@Request() req: any) {
     return this.analyticsService.getConversionFunnel(req.user.sub);
   }
 
   @Get('realtime')
-  async getRealtimeCount(@Request() req) {
+  async getRealtimeCount(@Request() req: any) {
     return this.analyticsService.getRealtimeLeadCount(req.user.sub);
   }
 
   @Get('buyers/comparison')
-  async getBuyerComparison(@Request() req) {
+  async getBuyerComparison(@Request() req: any) {
     return this.analyticsService.getBuyerComparison(req.user.sub);
   }
 
   @Get('activity')
-  async getActivityTimeline(@Request() req, @Query('limit') limit: number = 20) {
+  async getActivityTimeline(@Request() req: any, @Query('limit') limit: number = 20) {
     return this.analyticsService.getActivityTimeline(req.user.sub, limit);
   }
 
   @Get('export')
-  async exportData(@Request() req, @Query('format') format: 'json' | 'csv' = 'json') {
+  async exportData(@Request() req: any, @Query('format') format: 'json' | 'csv' = 'json') {
     return this.analyticsService.exportDashboardData(req.user.sub, format);
   }
 }

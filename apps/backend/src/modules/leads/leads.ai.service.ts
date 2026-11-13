@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import axios from 'axios';
-import { Lead } from '@prisma/client';
 
 export interface AIScoreResult {
   leadId: string;
@@ -33,7 +32,7 @@ export class LeadAIService {
     }
 
     // Prepare lead data for AI
-    const leadData = this.prepareLead Data(lead);
+    const leadData = this.prepareLeadData(lead);
 
     try {
       // Call AI model
@@ -71,7 +70,7 @@ export class LeadAIService {
   /**
    * Prepare lead data for AI model
    */
-  private prepareLeadData(lead: Lead): any {
+  private prepareLeadData(lead: any): any {
     return {
       firstName: lead.firstName,
       lastName: lead.lastName,
@@ -322,7 +321,7 @@ Recommendation: [text]
   /**
    * Calculate data completeness
    */
-  private calculateDataCompleteness(lead: Lead): number {
+  private calculateDataCompleteness(lead: any): number {
     let complete = 0;
     const total = 8;
 
@@ -380,7 +379,7 @@ Recommendation: [text]
   /**
    * Fallback scoring (rule-based)
    */
-  private fallbackScoring(lead: Lead): AIScoreResult {
+  private fallbackScoring(lead: any): AIScoreResult {
     let score = 0;
     const factors = [];
 
@@ -477,7 +476,7 @@ Recommendation: [text]
       select: { qualificationScore: true },
     });
 
-    const scores = leads.map((l) => l.qualificationScore);
+    const scores = leads.map((l: any) => l.qualificationScore);
     const total = scores.length;
 
     if (total === 0) {
@@ -490,10 +489,10 @@ Recommendation: [text]
       };
     }
 
-    const avgScore = Math.round(scores.reduce((a, b) => a + b, 0) / total);
-    const highQuality = scores.filter((s) => s >= 80).length;
-    const mediumQuality = scores.filter((s) => s >= 60 && s < 80).length;
-    const lowQuality = scores.filter((s) => s < 60).length;
+    const avgScore = Math.round(scores.reduce((a: number, b: number) => a + b, 0) / total);
+    const highQuality = scores.filter((s: any) => s >= 80).length;
+    const mediumQuality = scores.filter((s: any) => s >= 60 && s < 80).length;
+    const lowQuality = scores.filter((s: any) => s < 60).length;
 
     return {
       totalScored: total,

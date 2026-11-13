@@ -21,27 +21,27 @@ export class DistributionsController {
   }
 
   @Put(':id/accept')
-  async acceptDistribution(@Param('id') id: string, @Request() req) {
+  async acceptDistribution(@Param('id') id: string, @Request() req: any) {
     return this.distributionsService.acceptDistribution(id, req.user.sub);
   }
 
   @Put(':id/reject')
-  async rejectDistribution(@Param('id') id: string, @Body() body: any, @Request() req) {
+  async rejectDistribution(@Param('id') id: string, @Body() body: any, @Request() req: any) {
     return this.distributionsService.rejectDistribution(id, req.user.sub, body.reason);
   }
 
   @Get('stats')
-  async getStats(@Request() req) {
+  async getStats(@Request() req: any) {
     return this.distributionsService.getDistributionStats(req.user.sub);
   }
 
   @Get('pending')
-  async getPendingDistributions(@Request() req) {
+  async getPendingDistributions(@Request() req: any) {
     return this.distributionsService.getPendingDistributions(req.user.sub);
   }
 
   @Get('history')
-  async getHistory(@Request() req, @Query('limit') limit: number = 50) {
+  async getHistory(@Request() req: any, @Query('limit') limit: number = 50) {
     return this.distributionsService.getDistributionHistory(req.user.sub, limit);
   }
 

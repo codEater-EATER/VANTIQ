@@ -17,15 +17,15 @@ export class DashboardService {
     return {
       totalLeads: leads.length,
       leadsGeneratedToday: leads.filter(
-        (l) =>
+        (l: any) =>
           new Date(l.createdAt).toDateString() === new Date().toDateString(),
       ).length,
-      qualifiedLeads: leads.filter((l) => l.qualificationScore >= 60).length,
-      duplicateLeads: leads.filter((l) => l.isDuplicate).length,
+      qualifiedLeads: leads.filter((l: any) => l.qualificationScore >= 60).length,
+      duplicateLeads: leads.filter((l: any) => l.isDuplicate).length,
       distributedLeads: distributions.length,
       totalCampaigns: campaigns.length,
       totalCommission: commissions.reduce(
-        (sum, c) => sum + Number(c.commissionAmount),
+        (sum: number, c: any) => sum + Number(c.commissionAmount),
         0,
       ),
     };

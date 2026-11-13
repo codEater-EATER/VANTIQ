@@ -137,9 +137,9 @@ export class DashboardAnalyticsService {
 
     const topPerformingBuyers = await Promise.all(
       buyerStats
-        .sort((a, b) => b._count.id - a._count.id)
+        .sort((a: any, b: any) => b._count.id - a._count.id)
         .slice(0, 5)
-        .map(async (stat) => {
+        .map(async (stat: any) => {
           const accepted = await this.prisma.distribution.count({
             where: {
               buyerId: stat.buyerId,
@@ -163,9 +163,9 @@ export class DashboardAnalyticsService {
     });
 
     const topLeadSources = sources
-      .sort((a, b) => b._count.id - a._count.id)
+      .sort((a: any, b: any) => b._count.id - a._count.id)
       .slice(0, 5)
-      .map((s) => ({ source: s.source, count: s._count.id }));
+      .map((s: any) => ({ source: s.source, count: s._count.id }));
 
     // Leads by loan type
     const loanTypes = await this.prisma.lead.groupBy({
@@ -175,8 +175,8 @@ export class DashboardAnalyticsService {
     });
 
     const leadsByLoanType = loanTypes
-      .sort((a, b) => b._count.id - a._count.id)
-      .map((lt) => ({ type: lt.loanType, count: lt._count.id }));
+      .sort((a: any, b: any) => b._count.id - a._count.id)
+      .map((lt: any) => ({ type: lt.loanType, count: lt._count.id }));
 
     // Qualification trend (last 30 days)
     const qualificationTrend = await this.getQualificationTrend(userId);
@@ -197,9 +197,9 @@ export class DashboardAnalyticsService {
       where: { lead: { userId } },
     });
 
-    const accepted = distributions.filter((d) => d.acceptanceStatus === 'ACCEPTED').length;
-    const rejected = distributions.filter((d) => d.acceptanceStatus === 'REJECTED').length;
-    const pending = distributions.filter((d) => d.acceptanceStatus === 'PENDING').length;
+    const accepted = distributions.filter((d: any) => d.acceptanceStatus === 'ACCEPTED').length;
+    const rejected = distributions.filter((d: any) => d.acceptanceStatus === 'REJECTED').length;
+    const pending = distributions.filter((d: any) => d.acceptanceStatus === 'PENDING').length;
 
     const acceptanceRate =
       distributions.length > 0 ? Math.round((accepted / distributions.length) * 100) : 0;
@@ -208,18 +208,18 @@ export class DashboardAnalyticsService {
 
     // Average time to acceptance
     const acceptedDistributions = distributions.filter(
-      (d) => d.acceptanceStatus === 'ACCEPTED' && d.acceptedAt,
+      (d: any) => d.acceptanceStatus === 'ACCEPTED' && d.acceptedAt,
     );
 
     let averageTimeToAcceptance = 0;
     if (acceptedDistributions.length > 0) {
-      const times = acceptedDistributions.map((d) => {
+      const times = acceptedDistributions.map((d: any) => {
         const hours =
           (d.acceptedAt!.getTime() - d.distributedAt.getTime()) / (1000 * 60 * 60);
         return hours;
       });
       averageTimeToAcceptance = Math.round(
-        times.reduce((a, b) => a + b, 0) / times.length,
+        times.reduce((a: number, b: number) => a + b, 0) / times.length,
       );
     }
 
@@ -364,13 +364,13 @@ export class DashboardAnalyticsService {
     });
 
     return Promise.all(
-      buyers.map(async (buyer) => {
+      buyers.map(async (buyer: any) => {
         const leadsReceived = buyer.distributions.length;
         const accepted = buyer.distributions.filter(
-          (d) => d.acceptanceStatus === 'ACCEPTED',
+          (d: any) => d.acceptanceStatus === 'ACCEPTED',
         ).length;
         const rejected = buyer.distributions.filter(
-          (d) => d.acceptanceStatus === 'REJECTED',
+          (d: any) => d.acceptanceStatus === 'REJECTED',
         ).length;
         const acceptanceRate = leadsReceived > 0 ? Math.round((accepted / leadsReceived) * 100) : 0;
 
@@ -413,7 +413,7 @@ export class DashboardAnalyticsService {
       take: limit,
     });
 
-    return activities.map((a) => ({
+    return activities.map((a: any) => ({
       id: a.id,
       action: a.action,
       details: a.details || '',

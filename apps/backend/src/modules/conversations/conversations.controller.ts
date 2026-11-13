@@ -11,12 +11,12 @@ export class ConversationsController {
   constructor(private conversationsService: ConversationsService) {}
 
   @Get()
-  async getConversations(@Request() req) {
+  async getConversations(@Request() req: any) {
     return this.conversationsService.getConversations(req.user.sub);
   }
 
   @Post()
-  async createConversation(@Request() req, @Body() body: any) {
+  async createConversation(@Request() req: any, @Body() body: any) {
     return this.conversationsService.createConversation(req.user.sub, body);
   }
 }

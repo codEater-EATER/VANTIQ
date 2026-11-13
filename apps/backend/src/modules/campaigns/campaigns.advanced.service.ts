@@ -1,6 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
-import { Campaign } from '@prisma/client';
 
 export interface CampaignTemplate {
   name: string;
@@ -45,7 +44,7 @@ export class CampaignsAdvancedService {
     userId: string,
     template: CampaignTemplate,
     strategy: CampaignStrategy,
-  ): Promise<Campaign> {
+  ): Promise<any> {
     // Calculate budget based on lead target and per-lead cost
     const daysToRun = 30;
     const estimatedLeads = template.estimatedLeadsPerDay * daysToRun;
@@ -134,7 +133,7 @@ export class CampaignsAdvancedService {
   /**
    * Launch campaign
    */
-  async launchCampaign(campaignId: string): Promise<Campaign> {
+  async launchCampaign(campaignId: string): Promise<any> {
     const campaign = await this.prisma.campaign.update({
       where: { id: campaignId },
       data: {
@@ -149,7 +148,7 @@ export class CampaignsAdvancedService {
   /**
    * Pause campaign
    */
-  async pauseCampaign(campaignId: string): Promise<Campaign> {
+  async pauseCampaign(campaignId: string): Promise<any> {
     return this.prisma.campaign.update({
       where: { id: campaignId },
       data: {
@@ -161,7 +160,7 @@ export class CampaignsAdvancedService {
   /**
    * Stop campaign
    */
-  async stopCampaign(campaignId: string): Promise<Campaign> {
+  async stopCampaign(campaignId: string): Promise<any> {
     return this.prisma.campaign.update({
       where: { id: campaignId },
       data: {
@@ -299,7 +298,7 @@ export class CampaignsAdvancedService {
   /**
    * Assign buyers to campaign
    */
-  async assignBuyersToC ampaign(
+  async assignBuyersToCampaign(
     campaignId: string,
     buyerIds: string[],
     strategy: 'rotation' | 'performance' | 'capacity',

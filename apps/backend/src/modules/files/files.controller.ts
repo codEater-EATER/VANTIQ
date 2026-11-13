@@ -11,12 +11,12 @@ export class FilesController {
   constructor(private filesService: FilesService) {}
 
   @Get()
-  async getFiles(@Request() req) {
+  async getFiles(@Request() req: any) {
     return this.filesService.getFiles(req.user.sub);
   }
 
   @Post('upload')
-  async uploadFile(@Request() req, @Body() body: any) {
+  async uploadFile(@Request() req: any, @Body() body: any) {
     return this.filesService.uploadFile(req.user.sub, body);
   }
 }

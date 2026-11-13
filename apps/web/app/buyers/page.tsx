@@ -1,14 +1,11 @@
-'use client';
-
-import { MainLayout } from '@/components/layout/main-layout';
-
-export default function BuyersPage() {
+export default function Buyers() {
   return (
-    <MainLayout>
-      <div className="p-6 md:p-8">
-        <h1 className="text-4xl font-bold text-vantiq-ivory mb-2">Buyers / Clients</h1>
-        <p className="text-vantiq-ivory/60 mb-8">Buyer management coming soon...</p>
-      </div>
-    </MainLayout>
+    <div style={{ padding: '40px', color: '#F6F2EA' }}>
+      <h1>🏢 Buyer Management</h1>
+      <p style={{ marginTop: '20px', fontSize: '16px' }}>Authorized buyer portal and lead acceptance workflows</p>
+      <button style={{ marginTop: '20px', padding: '10px 20px', backgroundColor: '#8C7BB8', color: '#101827', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
+        + Add Buyer
+      </button>
+    </div>
   );
 }

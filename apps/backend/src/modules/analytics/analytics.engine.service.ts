@@ -82,7 +82,7 @@ export class AnalyticsEngineService {
 
     // Distribution history
     if (lead.distributions.length > 0) {
-      const accepted = lead.distributions.filter((d) => d.acceptanceStatus === 'ACCEPTED').length;
+      const accepted = lead.distributions.filter((d: any) => d.acceptanceStatus === 'ACCEPTED').length;
       const acceptanceRate = (accepted / lead.distributions.length) * 30;
       probability += acceptanceRate;
       if (accepted > 0) factors.push('Has been accepted by buyers');
@@ -191,7 +191,7 @@ export class AnalyticsEngineService {
     const insights: InsightRecommendation[] = [];
 
     // Insight 1: Lead quality
-    const avgScore = leads.length > 0 ? leads.reduce((sum, l) => sum + l.qualificationScore, 0) / leads.length : 0;
+    const avgScore = leads.length > 0 ? leads.reduce((sum: any, l: any) => sum + l.qualificationScore, 0) / leads.length : 0;
     if (avgScore < 60) {
       insights.push({
         category: 'Lead Quality',
@@ -203,7 +203,7 @@ export class AnalyticsEngineService {
     }
 
     // Insight 2: Distribution performance
-    const accepted = distributions.filter((d) => d.acceptanceStatus === 'ACCEPTED').length;
+    const accepted = distributions.filter((d: any) => d.acceptanceStatus === 'ACCEPTED').length;
     const acceptanceRate = distributions.length > 0 ? (accepted / distributions.length) * 100 : 0;
     if (acceptanceRate < 30) {
       insights.push({
@@ -246,7 +246,7 @@ export class AnalyticsEngineService {
     }
 
     // Insight 5: Verification status
-    const unverified = leads.filter((l) => l.status === 'NEW').length;
+    const unverified = leads.filter((l: any) => l.status === 'NEW').length;
     if (unverified > leads.length * 0.3) {
       insights.push({
         category: 'Verification',
@@ -287,7 +287,7 @@ export class AnalyticsEngineService {
 
     // Check for sudden drop in lead volume
     const lastWeek = leads.filter(
-      (l) => new Date().getTime() - l.createdAt.getTime() < 7 * 24 * 60 * 60 * 1000,
+      (l: any) => new Date().getTime() - l.createdAt.getTime() < 7 * 24 * 60 * 60 * 1000,
     ).length;
 
     if (lastWeek === 0 && leads.length > 0) {
@@ -300,7 +300,7 @@ export class AnalyticsEngineService {
     }
 
     // Check for unusually high qualification scores
-    const veryHighScores = leads.filter((l) => l.qualificationScore > 95).length;
+    const veryHighScores = leads.filter((l: any) => l.qualificationScore > 95).length;
     if (veryHighScores > leads.length * 0.5) {
       anomalies.push({
         type: 'score_inflation',
@@ -315,7 +315,7 @@ export class AnalyticsEngineService {
       where: { lead: { userId } },
     });
 
-    const pending = distributions.filter((d) => d.acceptanceStatus === 'PENDING').length;
+    const pending = distributions.filter((d: any) => d.acceptanceStatus === 'PENDING').length;
     if (pending > distributions.length * 0.7) {
       anomalies.push({
         type: 'distribution_backlog',
@@ -353,10 +353,10 @@ export class AnalyticsEngineService {
       },
     });
 
-    const qualified = leads.filter((l) => l.qualificationScore >= 60).length;
-    const distributed = leads.filter((l) => l.distributions.length > 0).length;
-    const accepted = leads.filter((l) =>
-      l.distributions.some((d) => d.acceptanceStatus === 'ACCEPTED'),
+    const qualified = leads.filter((l: any) => l.qualificationScore >= 60).length;
+    const distributed = leads.filter((l: any) => l.distributions.length > 0).length;
+    const accepted = leads.filter((l: any) =>
+      l.distributions.some((d: any) => d.acceptanceStatus === 'ACCEPTED'),
     ).length;
 
     const retention = leads.length > 0 ? (distributed / leads.length) * 100 : 0;
@@ -392,7 +392,7 @@ export class AnalyticsEngineService {
 
     // Factor 1: Inactivity
     const lastLeadDays = leads.length > 0
-      ? Math.floor((Date.now() - Math.max(...leads.map((l) => l.createdAt.getTime()))) / (1000 * 60 * 60 * 24))
+      ? Math.floor((Date.now() - Math.max(...leads.map((l: any) => l.createdAt.getTime()))) / (1000 * 60 * 60 * 24))
       : 30;
 
     if (lastLeadDays > 30) {
@@ -404,7 +404,7 @@ export class AnalyticsEngineService {
 
     // Factor 2: Low conversion
     const acceptanceRate = distributions.length > 0
-      ? distributions.filter((d) => d.acceptanceStatus === 'ACCEPTED').length / distributions.length
+      ? distributions.filter((d: any) => d.acceptanceStatus === 'ACCEPTED').length / distributions.length
       : 0;
 
     if (acceptanceRate < 0.2) {
@@ -414,7 +414,7 @@ export class AnalyticsEngineService {
 
     // Factor 3: Declining revenue
     const lastMonthCommissions = commissions.filter(
-      (c) => new Date().getTime() - c.createdAt.getTime() < 30 * 24 * 60 * 60 * 1000,
+      (c: any) => new Date().getTime() - c.createdAt.getTime() < 30 * 24 * 60 * 60 * 1000,
     );
 
     if (lastMonthCommissions.length === 0 && commissions.length > 0) {
@@ -423,7 +423,7 @@ export class AnalyticsEngineService {
     }
 
     // Factor 4: Low quality leads
-    const avgScore = leads.length > 0 ? leads.reduce((sum, l) => sum + l.qualificationScore, 0) / leads.length : 0;
+    const avgScore = leads.length > 0 ? leads.reduce((sum: any, l: any) => sum + l.qualificationScore, 0) / leads.length : 0;
     if (avgScore < 50) {
       riskScore += 20;
       riskFactors.push('Low average lead quality score');
@@ -490,7 +490,7 @@ export class AnalyticsEngineService {
     }
 
     const acceptedDistributions = lead.distributions.filter(
-      (d) => d.acceptanceStatus === 'ACCEPTED',
+      (d: any) => d.acceptanceStatus === 'ACCEPTED',
     ).length;
 
     const avgCommission =

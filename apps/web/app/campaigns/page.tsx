@@ -1,14 +1,11 @@
-'use client';
-
-import { MainLayout } from '@/components/layout/main-layout';
-
-export default function CampaignsPage() {
+export default function Campaigns() {
   return (
-    <MainLayout>
-      <div className="p-6 md:p-8">
-        <h1 className="text-4xl font-bold text-vantiq-ivory mb-2">Campaigns</h1>
-        <p className="text-vantiq-ivory/60 mb-8">Campaign management coming soon...</p>
-      </div>
-    </MainLayout>
+    <div style={{ padding: '40px', color: '#F6F2EA' }}>
+      <h1>📢 Campaigns</h1>
+      <p style={{ marginTop: '20px', fontSize: '16px' }}>Lead generation campaigns with AI-powered optimization</p>
+      <button style={{ marginTop: '20px', padding: '10px 20px', backgroundColor: '#C6AD83', color: '#101827', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
+        + Create Campaign
+      </button>
+    </div>
   );
 }

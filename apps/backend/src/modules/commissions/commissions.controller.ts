@@ -26,7 +26,7 @@ export class CommissionsController {
   }
 
   @Get('total')
-  async getTotalUserCommission(@Request() req) {
+  async getTotalUserCommission(@Request() req: any) {
     return this.commissionsService.getTotalUserCommission(req.user.sub);
   }
 
@@ -52,7 +52,7 @@ export class CommissionsController {
 
   @Get('report')
   async generateReport(
-    @Request() req,
+    @Request() req: any,
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
   ) {

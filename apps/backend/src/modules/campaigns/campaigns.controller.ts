@@ -30,7 +30,7 @@ export class CampaignsController {
   }
 
   @Post('from-template')
-  async createFromTemplate(@Request() req, @Body() body: any) {
+  async createFromTemplate(@Request() req: any, @Body() body: any) {
     return this.advancedService.createCampaignFromTemplate(
       req.user.sub,
       body.template,
@@ -70,7 +70,7 @@ export class CampaignsController {
 
   @Post(':id/assign-buyers')
   async assignBuyers(@Param('id') id: string, @Body() body: any) {
-    return this.advancedService.assignBuyersToC ampaign(id, body.buyerIds, body.strategy);
+    return this.advancedService.assignBuyersToCampaign(id, body.buyerIds, body.strategy);
   }
 
   @Get(':id/optimize')

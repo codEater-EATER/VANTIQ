@@ -1,14 +1,11 @@
-'use client';
-
-import { MainLayout } from '@/components/layout/main-layout';
-
-export default function DistributionsPage() {
+export default function Distributions() {
   return (
-    <MainLayout>
-      <div className="p-6 md:p-8">
-        <h1 className="text-4xl font-bold text-vantiq-ivory mb-2">Lead Distribution</h1>
-        <p className="text-vantiq-ivory/60 mb-8">Lead distribution management coming soon...</p>
+    <div style={{ padding: '40px', color: '#F6F2EA' }}>
+      <h1>🎯 Lead Distributions</h1>
+      <p style={{ marginTop: '20px', fontSize: '16px' }}>Smart lead routing and buyer assignment</p>
+      <div style={{ marginTop: '30px', backgroundColor: '#202124', padding: '20px', borderRadius: '8px' }}>
+        <p>Pending Distributions: 0</p>
       </div>
-    </MainLayout>
+    </div>
   );
 }

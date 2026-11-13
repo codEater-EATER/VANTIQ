@@ -1,31 +1,45 @@
 'use client';
 
-import { SignUp } from '@clerk/nextjs';
+import { SignUp as ClerkSignUp } from '@clerk/nextjs';
 
-export default function SignUpPage() {
+export default function SignUp() {
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-vantiq-ivory mb-2">Join VANTIQ</h1>
-        <p className="text-vantiq-ivory/60">Create your account to get started</p>
+    <div style={{ 
+      minHeight: '100vh', 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center',
+      backgroundColor: '#101827',
+      color: '#F6F2EA',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      <div style={{ maxWidth: '400px', width: '100%', padding: '40px' }}>
+        <ClerkSignUp 
+          appearance={{
+            baseTheme: undefined,
+            elements: {
+              formButtonPrimary: 'bg-[#C6AD83] text-[#101827] hover:bg-[#B39A6B]',
+              card: 'bg-[#1A1D24] text-[#F6F2EA]',
+              headerTitle: 'text-[#F6F2EA]',
+              headerSubtitle: 'text-[#8C7BB8]',
+              formFieldLabel: 'text-[#F6F2EA]',
+              formFieldInput: 'bg-[#202124] text-[#F6F2EA] border-[#8C7BB8]',
+              socialButtonsBlockButton: 'border-[#8C7BB8] text-[#F6F2EA]',
+              dividerLine: 'bg-[#8C7BB8]',
+              dividerText: 'text-[#8C7BB8]',
+              footer: 'text-[#8C7BB8]',
+              footerActionLink: 'text-[#8C7BB8] hover:text-[#C6AD83]',
+            },
+            layout: {
+              logoImageUrl: undefined,
+              socialButtonsVariant: 'blockButton',
+            }
+          }}
+          path="/auth/signup"
+          routing="path"
+          signInUrl="/auth/signin"
+        />
       </div>
-
-      <SignUp
-        appearance={{
-          elements: {
-            card: 'bg-vantiq-charcoal border border-vantiq-violet/20',
-            headerTitle: 'text-vantiq-ivory',
-            headerSubtitle: 'text-vantiq-ivory/60',
-            socialButtonsBlockButton: 'bg-vantiq-violet/10 text-vantiq-ivory hover:bg-vantiq-violet/20 border border-vantiq-violet/20',
-            dividerLine: 'bg-vantiq-violet/20',
-            dividerText: 'text-vantiq-ivory/60',
-            formFieldLabel: 'text-vantiq-ivory',
-            formFieldInput: 'bg-vantiq-navy border-vantiq-violet/20 text-vantiq-ivory focus:border-vantiq-violet',
-            formButtonPrimary: 'bg-vantiq-violet hover:bg-vantiq-violet/90',
-            footerActionLink: 'text-vantiq-violet hover:text-vantiq-gold',
-          },
-        }}
-      />
     </div>
   );
 }

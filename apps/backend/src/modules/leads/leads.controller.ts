@@ -34,12 +34,12 @@ export class LeadsController {
   ) {}
 
   @Post()
-  async createLead(@Request() req, @Body() body: any) {
+  async createLead(@Request() req: any, @Body() body: any) {
     return this.leadsService.createLead(req.user.sub, body);
   }
 
   @Get()
-  async getLeads(@Request() req, @Query() query: any) {
+  async getLeads(@Request() req: any, @Query() query: any) {
     return this.leadsService.getLeads(req.user.sub, query);
   }
 
@@ -56,7 +56,7 @@ export class LeadsController {
   @Post('import/file')
   @UseInterceptors(FileInterceptor('file'))
   async importLeads(
-    @Request() req,
+    @Request() req: any,
     @UploadedFile() file: Express.Multer.File,
     @Query('campaignId') campaignId?: string,
   ) {
@@ -69,17 +69,17 @@ export class LeadsController {
   }
 
   @Get('import/stats')
-  async getImportStats(@Request() req) {
+  async getImportStats(@Request() req: any) {
     return this.importService.getImportStats(req.user.sub);
   }
 
   @Post('qualify/bulk')
-  async bulkQualify(@Request() req, @Body() body: any) {
+  async bulkQualify(@Request() req: any, @Body() body: any) {
     return this.qualificationService.bulkQualify(req.user.sub, body.rules);
   }
 
   @Get('qualify/stats')
-  async getQualificationStats(@Request() req) {
+  async getQualificationStats(@Request() req: any) {
     return this.qualificationService.getQualificationStats(req.user.sub);
   }
 
@@ -89,7 +89,7 @@ export class LeadsController {
   }
 
   @Get('qualify/tiers')
-  async getLeadsByTier(@Request() req) {
+  async getLeadsByTier(@Request() req: any) {
     return this.qualificationService.getLeadsByTier(req.user.sub);
   }
 
@@ -99,12 +99,12 @@ export class LeadsController {
   }
 
   @Post('verify/bulk')
-  async bulkVerifyLeads(@Request() req) {
+  async bulkVerifyLeads(@Request() req: any) {
     return this.verificationService.bulkVerifyLeads(req.user.sub);
   }
 
   @Get('verify/stats')
-  async getVerificationStats(@Request() req) {
+  async getVerificationStats(@Request() req: any) {
     return this.verificationService.getVerificationStats(req.user.sub);
   }
 
@@ -119,12 +119,12 @@ export class LeadsController {
   }
 
   @Post('ai/score/bulk')
-  async bulkAIScore(@Request() req) {
+  async bulkAIScore(@Request() req: any) {
     return this.aiService.bulkAIScore(req.user.sub);
   }
 
   @Get('ai/stats')
-  async getAIScoringStats(@Request() req) {
+  async getAIScoringStats(@Request() req: any) {
     return this.aiService.getAIScoringStats(req.user.sub);
   }
 }
