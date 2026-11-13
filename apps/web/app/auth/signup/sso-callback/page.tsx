@@ -1,20 +1,21 @@
 'use client';
 
-import { useClerk } from '@clerk/nextjs';
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function SSOCallback() {
-  const { session } = useClerk();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (session) {
+    // Wait for Clerk to complete the OAuth flow, then redirect
+    const timer = setTimeout(() => {
       const redirectUrl = searchParams.get('redirect_url') || '/dashboard';
       router.push(redirectUrl);
-    }
-  }, [session, router, searchParams]);
+    }, 2000); // Give Clerk 2 seconds to complete
+
+    return () => clearTimeout(timer);
+  }, [router, searchParams]);
 
   return (
     <div style={{
