@@ -1,3 +1,4 @@
+// Dashboard page for VANTIQ
 export default function Dashboard() {
   return (
     <div style={{ padding: '40px', color: '#F6F2EA', backgroundColor: '#101827', minHeight: '100vh' }}>
