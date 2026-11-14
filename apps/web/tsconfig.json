@@ -14,10 +14,6 @@
     "jsx": "preserve",
     "incremental": true,
     "noImplicitAny": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./*"]
-    },
     "allowJs": true,
     "noEmit": true,
     "plugins": [
